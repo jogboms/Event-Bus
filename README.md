@@ -7,18 +7,18 @@ Within the listener, ```$this``` contains the name of the emitted event ```$this
 
 ``` php 
  Events::on('alert', function($message [, ...]){
-      echo($message);
+   echo($message);
  });
  Events::emit('alert', 'I love attending Events');
 
  //  [output] I love attending Events
  ```
  
- ### Multiple Events on a single callback
+### Multiple Events on a single callback
  
 ``` php 
  Events::on('alert | keep', function($message [, ...]){
-      echo($message);
+   echo($message);
  });
  Events::emit('keep', 'I love attending Events ');
  Events::emit('alert', 'I love attending Events ');
@@ -27,11 +27,11 @@ Within the listener, ```$this``` contains the name of the emitted event ```$this
 
  ```
 
- ### Regex style
+### Regex style
  
 ``` php 
  Events::on('alert.*', function($message [, ...]){
-      echo($message);
+   echo($message);
  });
  Events::emit('alert.regex.one', 'I love attending Events ');
  Events::emit('alert.regex.two', 'I love attending Events ');
