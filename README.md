@@ -28,8 +28,7 @@ $events->emit('alert', 'I love attending to Events');
 //  I love attending to Events
 ```
  
-
-### Basic with multiple parameter
+### Basic with multiple parameters
 This Emitter would attach to the alert-multi listeners and pass in multiple parameters to it.
 
 ``` php 
