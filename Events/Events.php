@@ -1,37 +1,56 @@
 <?php
-/**
- * PUSH MVC Framework.
- * @package See composer.json
- * @version See composer.json
- * @author See composer.json
- * @copyright See composer.json
- * @license See composer.json
- */
-namespace Events;
 
+namespace Events;
 
 Class EventsException extends \Exception {}
 
 Class Events
 {
-  protected
-    /**
-    * @var array Contains all declared events
-    */
-    $__events = [],
-    /**
-    * @var array Contains all emitted events and its location
-    */
-    $__events_log = [],
-    /**
-    * @var Delimiter used to separate multiple event_names
-    */
-    $__separator = '|';
+  /**
+  * @var boolean All logging of events
+  */
+  protected $debug = false;
+  /**
+  * @var array Contains all declared events
+  */
+  protected $__events = [];
+  /**
+  * @var array Contains all emitted events and its location
+  */
+  protected $__events_log = [];
+  /**
+  * @var Delimiter used to separate multiple event_names
+  */
+  protected $__separator = '|';
+
+  /**
+   * Create an Instance of the Bus
+   * @param  boolean $debug Set debug parameter
+   */
+  public function __construct($debug = false)
+  {
+    $this->debug = $debug;
+  }
+
+  /**
+   * Listen once to an event or multiples of events using | as separator
+   * @param  string $event_name Name of event to listen to
+   * @param  callable $callable   Callable to invoke when the event is emitted
+   *                              This callable should contain the same number of parameters expected to recieve from the listener
+   *                              and in the order at which it is expected.
+   * @return self
+   */
+  public function once($event_name, $callable)
+  {
+    return $this->on($event_name, $callable, true);
+  }
 
   /**
    * Listen to an event or multiples of events using | as separator
    * @param  string $event_name Name of event to listen to
-   * @param  callable $callable   Callable to invoke when the event is emitted
+   * @param  callable $callable   Callable to invoke when the event is emitted. 
+   *                              This callable contains the same number of parameters passed to the event
+   *                              At any pointit was emitted and in the order at which it was constructed.
    * @return self
    */
   public function on($event_name, $callable, $once = false)
@@ -43,20 +62,10 @@ Class Events
     /* Incase of multiple events seperated by | */
     $events = explode($this->__separator, $event_name);
     foreach ($events as $event_name) {
+      // Allow for name-spacing
       $this->__events[trim(str_replace('*', '.*', $event_name))][] = $event;
     }
     return $this;
-  }
-
-  /**
-   * Listen once to an event or multiples of events using | as separator
-   * @param  string $event_name Name of event to listen to
-   * @param  callable $callable   Callable to invoke when the event is emitted
-   * @return self
-   */
-  public function once($event_name, $callable)
-  {
-    return $this->on($event_name, $callable, true);
   }
 
   /**
@@ -78,8 +87,8 @@ Class Events
    * Emit Events
    * @param  string $event_name Event name
    * @example ->emit($event_name [, ...])
+   * @throws EventsException
    * @return self
-   * @see function.inc.php for trim_root();
    */
   public function emit($event_name)
   {
@@ -88,7 +97,7 @@ Class Events
 
     if($this->debug){
       list($e) = debug_backtrace();
-      $this->__events_log[] = [$event_name, basename($e['file']).' ['.$e['line'].']'];
+      $this->__events_log[] = [$event_name, basename($e['file']), $e['line']];
     }
 
     /* When it is a Regex-called event */
@@ -99,7 +108,7 @@ Class Events
 
         foreach($events as $event){
           if(!is_callable($event[0]))
-            throw new EventsException('Event listener `'.$event_name.'` requires a valid event function');
+            throw new EventsException('Event listener `'.$event_name.'` requires a valid listener function');
 
           $class = new \stdClass();
           $class->event = $event_name;
@@ -129,7 +138,7 @@ Class Events
    * Get all emitted events and their point of emit
    * @return array
    */
-  public function events_log()
+  public function log()
   {
     return $this->__events_log;
   }

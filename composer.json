@@ -1,0 +1,27 @@
+{
+    "name": "jogboms/events_bus",
+    "fullname" : "Event Management Syatem",
+    "description": "A micro event emitting and management system for PHP",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["framework", "event bus", "minimal", "event"],
+    "homepage": "http://github.com/Jogboms/events_bus",
+    "version" : "0.1.0",
+    "created" : 2014,
+    "authors": [
+        {
+            "name": "Jeremiah Ogbomo",
+            "email": "jaybladez09@gmail.com",
+            "link" : "http://www.github.com/jogboms"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Events\\": "Events"
+        }
+    },
+    "require": {
+        "php": ">=5.5.0"
+    }
+}
